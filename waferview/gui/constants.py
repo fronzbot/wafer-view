@@ -15,6 +15,7 @@ FAIL_COLOR = "#CC3300"
 # Wafer data keys
 WAFER_ID = "wafer_id"
 LOT_ID = "lot_id"
+WAFER_SIZE = "wafer_size"
 CHIP_SIZE = "chip_size"
 PRODUCT_ID = "product_id"
 CREATE_DATE = "created"

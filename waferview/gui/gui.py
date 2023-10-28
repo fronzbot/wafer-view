@@ -26,7 +26,7 @@ class AppTop(wx.Frame):
         self.create_panels()
         self.create_menu()
         self.create_status(self.sizers["grid"])
-        self.create_viewer(self.sizers["right"])
+        self.create_viewer()
         self.left_panel.SetSizer(self.sizers["left"])
         self.right_panel.SetSizer(self.sizers["right"])
         self.grid_panel.SetSizerAndFit(self.sizers["grid"])
@@ -105,14 +105,19 @@ class AppTop(wx.Frame):
         self.menubar = MenuBar(self)
         self.SetMenuBar(self.menubar)
 
-    def create_viewer(self, sizer):
+    def create_viewer(self):
         """Create the wafer map viewer."""
-        sizer.AddStretchSpacer(1)
+        try:
+            self.viewer.Destroy()
+        except AttributeError:
+            pass
+        self.sizers["right"].AddStretchSpacer(1)
         self.viewer = semimap.Viewer(
             self, self.right_panel, constants.VIEWER_SIZE[0], constants.VIEWER_SIZE[1]
         )
-        sizer.Add(self.viewer, 0, wx.ALIGN_CENTER)
-        sizer.AddStretchSpacer(1)
+        self.sizers["right"].Add(self.viewer, 0, wx.ALIGN_CENTER)
+        self.sizers["right"].AddStretchSpacer(1)
+
 
     def create_status(self, sizer):
         """Create the data grid table."""
@@ -156,4 +161,5 @@ class MenuBar(wx.MenuBar):
             self.file_name = file_dialog.GetPath()
 
         # Once a file is selected, we need to generate the map and viewer
+        self.parent.create_viewer()
         self.parent.viewer.generate_map(self.file_name)
