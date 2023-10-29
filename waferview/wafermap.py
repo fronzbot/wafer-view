@@ -11,6 +11,7 @@ from waferview.gui.constants import (
     CHIP_SIZE,
     PRODUCT_ID,
     CREATE_DATE,
+    DEFAULT_WAFER_SIZE
 )
 
 
@@ -31,7 +32,6 @@ class WaferMap:
         # Strip namespace from XML file
         for _, elem in tree:
             _, _, elem.tag = elem.tag.rpartition("}")
-        # tree = ET.parse(xmlfile)
         xml_data = tree.root
         xmlstr = ET.tostring(xml_data, encoding="utf-8", method="xml")
         xml_dict = xmltodict.parse(xmlstr)
@@ -50,13 +50,13 @@ class WaferMap:
         self.device_attr = {
             WAFER_ID: self._map_data.get("@WaferId", None),
             LOT_ID: device_data.get("@LotId", None),
-            WAFER_SIZE: device_data.get("@WaferSize", 300),
+            WAFER_SIZE: float(device_data.get("@WaferSize", DEFAULT_WAFER_SIZE)),
             CHIP_SIZE: [
                 float(device_data.get("@DeviceSizeX", 0)),
                 float(device_data.get("@DeviceSizeY", 0)),
             ],
             PRODUCT_ID: device_data.get("@ProductId", None),
-            CREATE_DATE: device_data["Data"].get("@CreateDate"),
+            CREATE_DATE: device_data.get("@CreateDate", None),
             "rows": int(device_data.get("@Rows", 1)),
             "cols": int(device_data.get("@Columns", 1)),
         }

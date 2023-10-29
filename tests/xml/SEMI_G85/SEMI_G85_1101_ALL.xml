@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Map xmlns="http://www.semi.org" WaferId="P6AB36-01" FormatRevision="SEMI G85-1101">
-    <Device BinType="HexaDecimal" LotId="DEADBEEF" DeviceSizeX="5000" DeviceSizeY="5000" FrameId="" NullBin="FF" ProductId="FOOBAR" SupplierName="FAKE" Rows="60" Columns="60" MapType="Array" OriginLocation="0" Orientation="0" WaferSize="300">
+<Map xmlns="http://www.semi.org" WaferId="ABCD123" FormatRevision="SEMI G85-1101">
+    <Device BinType="HexaDecimal" LotId="DEADBEEF" DeviceSizeX="5000" DeviceSizeY="5000" FrameId="" NullBin="FF" ProductId="FOOBAR" SupplierName="FAKE" Rows="60" Columns="60" MapType="Array" OriginLocation="0" Orientation="0" WaferSize="300" CreateDate="20231028123456">
         <Bin BinCode="00" BinQuality="Pass" BinDescription="Pass" BinCount="2765"/>
         <Bin BinCode="DE" BinQuality="Fail" BinDescription="Fail" BinCount="38"/>
         <Bin BinCode="AD" BinQuality="Fail" BinDescription="QC" BinCount="5"/>
-        <Data MapName="SEMI_G85_1101_ALL.xml" CreateDate="20231028123456">
+        <Data MapName="SEMI_G85_1101_ALL.xml" Version="2">
             <Row><![CDATA[FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDEDEADDEDE00DEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF]]></Row>
             <Row><![CDATA[FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF]]></Row>
             <Row><![CDATA[FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00DE000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF]]></Row>

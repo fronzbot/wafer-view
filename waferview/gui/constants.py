@@ -20,3 +20,6 @@ CHIP_SIZE = "chip_size"
 PRODUCT_ID = "product_id"
 CREATE_DATE = "created"
 ALL_KEYS = [WAFER_ID, LOT_ID, CHIP_SIZE, PRODUCT_ID, CREATE_DATE]
+
+# Various constants
+DEFAULT_WAFER_SIZE = 300
