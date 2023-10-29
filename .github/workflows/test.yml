@@ -28,7 +28,7 @@ jobs:
         sudo apt-get install build-essential libgtk-3-dev
     - name: Install wxPython
       run: |
-        python -m pip install --upgrade pip
+        python -m pip install --upgrade pip 
         sudo pip install --upgrade --trusted-host wxpython.org --pre -f http://wxpython.org/Phoenix/snapshot-builds/ wxPython_Phoenix
     - name: Install Dependencies
       run: |
