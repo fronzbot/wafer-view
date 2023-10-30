@@ -11,24 +11,32 @@ class Viewer(wx.Panel):
 
     def __init__(self, top, parent, width, height):
         """Initialize the viewer panel."""
+        width, height = parent.GetSize()
         wx.Panel.__init__(self, parent, size=(width, height))
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.top = top
         self.grid = top.data_grid
         self.legend_sizer = top.sizers["legend"]
         self.legend_parent = top.legend_panel
-        self.width = width - 20
-        self.height = height - 20
-        self.xoff = 10
-        self.yoff = 0
         self.pixel_elements = {}
         self.color_map = {}
+        scale_val = 0.95 * min(width, height)
+        self.xoffset = int((0.95 * width - scale_val) / 2)
+        self.yoffset = int((0.95 * height - scale_val) / 2)
+        self.scale = (scale_val, scale_val)
 
     def OnPaint(self, event):
         """Handle painting events."""
         self.Refresh()
         self.Update()
         dc = wx.PaintDC(self)
+        dc.SetPen(
+            wx.Pen(wx.Colour(constants.NULL_COLOR), width=0.1, style=wx.PENSTYLE_SOLID)
+        )
+        (width, height) = self.top.right_panel.GetSize()
+        xScale = min(width, height) / self.scale[0]
+        yScale = min(width, height) / self.scale[1]
+        dc.SetUserScale(xScale, yScale)
 
         for key, rects in self.pixel_elements.items():
             try:
@@ -36,7 +44,6 @@ class Viewer(wx.Panel):
             except KeyError:
                 color = wx.Colour(constants.NULL_COLOR)
 
-            dc.SetPen(wx.Pen(color, width=1, style=wx.PENSTYLE_SOLID))
             dc.SetBrush(wx.Brush(color, style=wx.BRUSHSTYLE_SOLID))
             dc.DrawRectangleList(rects)
 
@@ -59,10 +66,10 @@ class Viewer(wx.Panel):
         )
         for pixel in self.wmap.pixels:
             loc = (
-                pixel[0][0] * self.width + self.xoff,
-                pixel[0][1] * self.height + self.yoff,
+                pixel[0][0] * self.scale[0] + self.xoffset,
+                pixel[0][1] * self.scale[1] + self.yoffset,
             )
-            size = (pixel[1][0] * self.width - 1, pixel[1][1] * self.height - 1)
+            size = (pixel[1][0] * self.scale[0], pixel[1][1] * self.scale[1] - 1)
             color = wx.Colour(constants.NULL_COLOR)
             if pixel[2]:
                 color = wx.Colour(constants.PASS_COLOR)
@@ -124,13 +131,20 @@ class Viewer(wx.Panel):
                     color,
                 ),
                 1,
-                wx.EXPAND,
+                wx.EXPAND | wx.ALIGN_TOP,
             )
 
+        self.top.legend_panel.SetSizer(self.legend_sizer)
+        self.top.legend_panel.SetupScrolling()
         # Super janky, but only way I could get the legend to draw
+        (sw, sh) = wx.DisplaySize()
         self.top.SetSize(
-            wx.Size(constants.WINDOW_SIZE[0] - 1, constants.WINDOW_SIZE[1] - 1)
+            wx.Size(
+                min(sw, sh) * constants.WINDOW_SCALE - 1,
+                min(sw, sh) * constants.WINDOW_SCALE - 1,
+            )
         )
+        self.top.window(no_center=True)
 
 
 class DataGrid(wx.grid.Grid):
@@ -183,7 +197,7 @@ class LegendEntry(wx.Panel):
         self.check_box.SetValue(True)
         self.Bind(wx.EVT_CHECKBOX, self.toggle_highlight)
 
-        self.sizer.Add(self.text_panel, 1, wx.EXPAND | wx.ALL, border=2)
+        self.sizer.Add(self.text_panel, 1, wx.ALL, border=2)
 
     def create_color_picker(self):
         """Create the legend color chooser."""
