@@ -35,7 +35,8 @@ class AppTop(wx.Frame):
     def window(self, no_center=False):
         """Set the window size."""
         (screen_width, screen_height) = wx.DisplaySize()
-        xSize = int(screen_width * constants.WINDOW_SCALE)
+        # Limit to 4:3 aspect ratio
+        xSize = int(screen_height * constants.WINDOW_SCALE * constants.ASPECT_RATIO)
         ySize = int(screen_height * constants.WINDOW_SCALE)
         self.SetSize(wx.Size(xSize, ySize))
         if not no_center:
@@ -43,7 +44,11 @@ class AppTop(wx.Frame):
 
     def get_panel_sizes(self):
         self.panel_size = self.GetSize()
-        viewerX = self.panel_size[0] * constants.VIEWER_SCALE - 2*constants.BORDER_SIZE
+        # Limit to square aspect ratio
+        self.panel_size[0] = int(self.panel_size[1])
+
+        # Make viewer square
+        viewerX = self.panel_size[1] * constants.VIEWER_SCALE - 2*constants.BORDER_SIZE
         viewerY = self.panel_size[1] * constants.VIEWER_SCALE - 2*constants.BORDER_SIZE
         dataX = self.panel_size[0] * constants.DATA_SCALE - 2*constants.BORDER_SIZE
         dataY = self.panel_size[1] * constants.DATA_SCALE - 2*constants.BORDER_SIZE
