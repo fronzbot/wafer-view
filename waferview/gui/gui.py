@@ -208,53 +208,16 @@ class MenuBar(wx.MenuBar):
 
     def about_screen(self, event):
         """Open the About dialog on event."""
-        about = wx.Frame(None, title="About Waferview")
-        panel = wx.Panel(about, 0)
+        about = wx.adv.AboutDialogInfo()
+        about.SetName("Wafer-View")
+        about.SetVersion(__version__)
+        about.SetLicense("Apache 2.0 <https://github.com/fronzbot/wafer-view/LICENSE>")
+        about.SetDescription("Open source wafer map viewer utility")
+        about.SetCopyright("(C) 2023")
+        about.SetWebSite("http://github.com/fronzbot/wafer-view")
+        about.AddDeveloper("Kevin Fronczak <kfronczak@gmail.com>")
 
-        sizer_top = wx.BoxSizer(wx.VERTICAL)
-        flex_sizer = wx.FlexGridSizer(1, 6, 2)
-
-        title_font = wx.Font(wx.FontInfo(16).Bold())
-
-        title_str = wx.StaticText(
-            panel,
-            label="Wafer View: Open Source Wafer Map Viewer",
-            style=wx.ALIGN_CENTER,
-        )
-        version_str = wx.StaticText(
-            panel, label=f"Version: {__version__}", style=wx.ALIGN_CENTER
-        )
-        license_str = wx.StaticText(
-            panel, label="License: Apache 2.0", style=wx.ALIGN_CENTER
-        )
-        author_str = wx.StaticText(
-            panel,
-            label="Author: Kevin Fronczak <kfronczak@gmail.com>",
-            style=wx.ALIGN_CENTER,
-        )
-        source_str = wx.adv.HyperlinkCtrl(
-            panel,
-            label="View Source Code",
-            url="https://github.com/fronzbot/wafer-view",
-        )
-        copy_str = wx.StaticText(panel, label="(c) 2023", style=wx.ALIGN_CENTER)
-
-        title_str.SetFont(title_font)
-
-        flex_sizer.AddMany(
-            [
-                (title_str, 1, wx.ALIGN_CENTER),
-                (version_str, 1, wx.ALIGN_CENTER),
-                (license_str, 1, wx.ALIGN_LEFT),
-                (author_str, 1, wx.ALIGN_LEFT),
-                (source_str, 1, wx.ALIGN_CENTER),
-                (copy_str, 1, wx.ALIGN_CENTER),
-            ]
-        )
-        sizer_top.Add(flex_sizer, 0, wx.ALL | wx.EXPAND, border=constants.BORDER_SIZE)
-        panel.SetSizerAndFit(sizer_top)
-        about.Centre()
-        about.Show()
+        wx.adv.AboutBox(about)
 
     def save_image(self, event):
         """Save image drawn on wafermap viewer."""
