@@ -37,27 +37,37 @@ class AppTop(wx.Frame):
         """Set the window size."""
         (screen_width, screen_height) = wx.DisplaySize()
         # Limit to 4:3 aspect ratio
-        self.xSize = int(screen_height * constants.WINDOW_SCALE * constants.ASPECT_RATIO)
+        self.xSize = int(
+            screen_height * constants.WINDOW_SCALE * constants.ASPECT_RATIO
+        )
         self.ySize = int(screen_height * constants.WINDOW_SCALE)
         self.SetSize(wx.Size(self.xSize, self.ySize))
         if not no_center:
             self.Center()
 
     def get_panel_sizes(self):
+        """Get panel sizes based on screen size."""
         self.panel_size = self.GetSize()
         # Limit to square aspect ratio
         self.panel_size[0] = int(self.panel_size[1])
 
         # Make viewer square
-        viewerX = self.panel_size[1] * constants.VIEWER_SCALE - 2*constants.BORDER_SIZE
-        viewerY = self.panel_size[1] * constants.VIEWER_SCALE - 2*constants.BORDER_SIZE
-        dataX = self.panel_size[0] * constants.DATA_SCALE - 2*constants.BORDER_SIZE
-        dataY = self.panel_size[1] * constants.DATA_SCALE - 2*constants.BORDER_SIZE
+        viewerX = (
+            self.panel_size[1] * constants.VIEWER_SCALE - 2 * constants.BORDER_SIZE
+        )
+        viewerY = (
+            self.panel_size[1] * constants.VIEWER_SCALE - 2 * constants.BORDER_SIZE
+        )
+        dataX = self.panel_size[0] * constants.DATA_SCALE - 2 * constants.BORDER_SIZE
+        dataY = self.panel_size[1] * constants.DATA_SCALE - 2 * constants.BORDER_SIZE
 
         self.grid_size = (dataX, int(self.panel_size[1] * constants.GRID_SCALE))
         self.legend_size = (dataX, int(self.panel_size[1] * constants.LEGEND_SCALE))
 
-        self.legend_pos = (constants.BORDER_SIZE + 5, self.legend_size[1] + constants.BORDER_SIZE)
+        self.legend_pos = (
+            constants.BORDER_SIZE + 5,
+            self.legend_size[1] + constants.BORDER_SIZE,
+        )
 
         self.viewer_size = (viewerX, viewerY)
         self.data_size = (dataX, dataY)
@@ -68,8 +78,12 @@ class AppTop(wx.Frame):
         self.top_panel = wx.Panel(self)
         self.get_panel_sizes()
 
-        self.left_panel = wx.Panel(self.top_panel, size=self.data_size, name="Wafer Data")
-        self.right_panel = wx.Panel(self.top_panel, size=self.panel_size, name="Wafer Map")
+        self.left_panel = wx.Panel(
+            self.top_panel, size=self.data_size, name="Wafer Data"
+        )
+        self.right_panel = wx.Panel(
+            self.top_panel, size=self.panel_size, name="Wafer Map"
+        )
 
         # In the left panel, we have one panel for the grid and one for the legend
         self.grid_panel = wx.Panel(
@@ -86,8 +100,12 @@ class AppTop(wx.Frame):
 
         # Add main panels to the primary sizer
         self.main_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.main_sizer.Add(self.left_panel, 0, wx.EXPAND | wx.ALL, border=constants.BORDER_SIZE)
-        self.main_sizer.Add(self.right_panel, 1, wx.EXPAND | wx.ALL, border=constants.BORDER_SIZE)
+        self.main_sizer.Add(
+            self.left_panel, 0, wx.EXPAND | wx.ALL, border=constants.BORDER_SIZE
+        )
+        self.main_sizer.Add(
+            self.right_panel, 1, wx.EXPAND | wx.ALL, border=constants.BORDER_SIZE
+        )
         self.top_panel.SetSizer(self.main_sizer)
 
         # Set background colors
@@ -118,7 +136,7 @@ class AppTop(wx.Frame):
             self.legend_panel, label="Wafer Map Legend", style=wx.ALIGN_CENTER
         )
         legend_text.SetFont(font)
-        self.sizers["legend"].Add(legend_text, 1, wx.ALL|wx.ALIGN_CENTER, border=5)
+        self.sizers["legend"].Add(legend_text, 1, wx.ALL | wx.ALIGN_CENTER, border=5)
 
     def create_menu(self):
         """Create the menu bar."""
@@ -134,14 +152,15 @@ class AppTop(wx.Frame):
         except AttributeError:
             pixels = {}
             colors = {}
-#        self.sizers["right"].AddStretchSpacer(1)
+        #        self.sizers["right"].AddStretchSpacer(1)
         self.viewer = semimap.Viewer(
             self, self.right_panel, self.viewer_size[0], self.viewer_size[1]
         )
         self.viewer.pixel_elements = pixels
         self.viewer.color_map = colors
         self.sizers["right"].Add(self.viewer, 1, wx.EXPAND | wx.ALL)
-#        self.sizers["right"].AddStretchSpacer(1)
+
+    #        self.sizers["right"].AddStretchSpacer(1)
 
     def create_status(self):
         """Create the data grid table."""
