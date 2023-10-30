@@ -46,6 +46,8 @@ class Viewer(wx.Panel):
             dc.SetBrush(wx.Brush(color, style=wx.BRUSHSTYLE_SOLID))
             dc.DrawRectangleList(rects)
 
+        return dc
+
     def generate_map(self, filename):
         """Generate the wafermap bitmap objects."""
         self.wmap = wafermap.WaferMap(filename)

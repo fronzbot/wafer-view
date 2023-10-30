@@ -1,5 +1,6 @@
 """GUI module."""
 import importlib.metadata
+import os
 import wx
 import wx.adv
 import wx.lib.scrolledpanel as scrolled
@@ -196,6 +197,8 @@ class MenuBar(wx.MenuBar):
         self.Append(filemenu, "&File")
         filemenu.Append(wx.ID_OPEN, "O&pen\tCtrl-O")
         filemenu.Append(wx.ID_EXIT, "E&xit\tAlt-X", "Close window and exit program")
+        filemenu.Append(wx.ID_SAVE, "S&ave\tCtrl-S", "Save wafermap image")
+        self.parent.Bind(wx.EVT_MENU, self.save_image, id=wx.ID_SAVE)
         self.parent.Bind(wx.EVT_MENU, self.file_browser, id=wx.ID_OPEN)
 
         helpmenu = wx.Menu()
@@ -252,6 +255,38 @@ class MenuBar(wx.MenuBar):
         panel.SetSizerAndFit(sizer_top)
         about.Centre()
         about.Show()
+
+    def save_image(self, event):
+        """Save image drawn on wafermap viewer."""
+        with wx.DirDialog(
+            self,
+            message="Choose save directory",
+            defaultPath=".",
+        ) as dir_dialog:
+            if dir_dialog.ShowModal() == wx.ID_CANCEL:
+                return
+            dir_name = dir_dialog.GetPath()
+
+        dc = self.parent.viewer.OnPaint(None)
+        size = self.parent.viewer.GetSize()
+        bmp = wx.Bitmap(size.width, size.height)
+        memdc = wx.MemoryDC()
+        memdc.SelectObject(bmp)
+
+        memdc.Blit(0, 0, size.width, size.height, dc, 0, 0)
+        memdc.SelectObject(wx.NullBitmap)
+
+        img = bmp.ConvertToImage()
+        file_name = os.path.join(dir_name, "wafermap.bmp")
+        img.SaveFile(file_name, wx.BITMAP_TYPE_PNG)
+
+        notif = wx.MessageDialog(
+            None,
+            f"{file_name}",
+            caption="Wafer Map Image Saved!",
+            style=wx.OK | wx.ALIGN_RIGHT,
+        )
+        notif.ShowModal()
 
     def file_browser(self, event):
         """Open the file browser on event."""
