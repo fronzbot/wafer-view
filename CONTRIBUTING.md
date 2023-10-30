@@ -40,6 +40,7 @@ source venv/bin/activate
 pip install -r requirement.txt
 pip install -r requirements_test.txt
 pip install tox
+pip install -e .
 ```
 
 #### Create your feature branch
