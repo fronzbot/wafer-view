@@ -13,7 +13,7 @@ from waferview.gui.constants import (
     CREATE_DATE,
     DEFAULT_WAFER_SIZE,
     PASS,
-    NULL
+    NULL,
 )
 
 

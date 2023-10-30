@@ -25,6 +25,7 @@ class Viewer(wx.Panel):
         self.color_map = {}
 
     def OnPaint(self, event):
+        """Handle painting events."""
         self.Refresh()
         self.Update()
         dc = wx.PaintDC(self)
@@ -98,6 +99,7 @@ class Viewer(wx.Panel):
         self.generate_legend()
 
     def update_pixels(self, key, new_color):
+        """Update pixels in viewer."""
         self.color_map[key] = wx.Colour(new_color)
 
     def update_data(self):
