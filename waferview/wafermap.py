@@ -11,7 +11,7 @@ from waferview.gui.constants import (
     CHIP_SIZE,
     PRODUCT_ID,
     CREATE_DATE,
-    DEFAULT_WAFER_SIZE
+    DEFAULT_WAFER_SIZE,
 )
 
 
@@ -92,8 +92,12 @@ class WaferMap:
         """Generate a wafer map with data and coordinates."""
         if self.device_attr[CHIP_SIZE] == [0, 0]:
             # Need to use rows and columns to guess size
-            self.device_attr[CHIP_SIZE][0] = 1000 * self.device_attr[WAFER_SIZE] / self.device_attr["cols"]
-            self.device_attr[CHIP_SIZE][1] = 1000 * self.device_attr[WAFER_SIZE] / self.device_attr["rows"]
+            self.device_attr[CHIP_SIZE][0] = (
+                1000 * self.device_attr[WAFER_SIZE] / self.device_attr["cols"]
+            )
+            self.device_attr[CHIP_SIZE][1] = (
+                1000 * self.device_attr[WAFER_SIZE] / self.device_attr["rows"]
+            )
 
         # Normalize locations to a 0 to 1 grid with 0,0 at bottom left and
         # 1,1, at top right

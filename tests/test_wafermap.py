@@ -1,12 +1,21 @@
 """Tests for wafermap module."""
 
 import unittest
-from unittest import mock
 from waferview import wafermap
-from waferview.gui.constants import SUPPORTED_FORMATS, WAFER_ID, LOT_ID, WAFER_SIZE, CHIP_SIZE, PRODUCT_ID, CREATE_DATE, DEFAULT_WAFER_SIZE
+from waferview.gui.constants import (
+    SUPPORTED_FORMATS,
+    WAFER_ID,
+    LOT_ID,
+    WAFER_SIZE,
+    CHIP_SIZE,
+    PRODUCT_ID,
+    CREATE_DATE,
+    DEFAULT_WAFER_SIZE,
+)
 
 
 TEST_XML = "./xml/SEMI_G85/SEMI_G85_1101_MIN.xml"
+
 
 class TestWaferMap(unittest.TestCase):
     """Test the WaferMap class."""
@@ -58,7 +67,7 @@ class TestWaferMap(unittest.TestCase):
                 "@Rows": "13",
                 "@Columns": "17",
                 "@CreateDate": "19700101",
-            }
+            },
         }
         self.test_wmap.get_attributes()
         self.assertEqual(self.test_wmap.device_attr[WAFER_ID], "foo")
@@ -79,7 +88,7 @@ class TestWaferMap(unittest.TestCase):
                     {"@BinCode": "000", "@BinQuality": "Pass", "@BinCount": "100"},
                     {"@BinCode": "111", "@BinQuality": "Fail", "@BinCount": "10"},
                     {"@BinCode": "222", "@BinQuality": "Fail", "@BinCount": "1"},
-                ]
+                ],
             }
         }
 
@@ -111,11 +120,31 @@ class TestWaferMap(unittest.TestCase):
             "Device": {
                 "@NullBin": "255",
                 "Bin": [
-                    {"@BinCode": "000", "@BinQuality": "Pass", "@BinCount": "100", "@BinDescription": "foo"},
-                    {"@BinCode": "111", "@BinQuality": "Fail", "@BinCount": "10", "@BinDescription": "bar"},
-                    {"@BinCode": "222", "@BinQuality": "Fail", "@BinCount": "1", "@BinDescription": "beef"},
-                    {"@BinCode": "255", "@BinQuality": "NULL", "@BinCount": "0", "@BinDescription": "Null bin"}
-                ]
+                    {
+                        "@BinCode": "000",
+                        "@BinQuality": "Pass",
+                        "@BinCount": "100",
+                        "@BinDescription": "foo",
+                    },
+                    {
+                        "@BinCode": "111",
+                        "@BinQuality": "Fail",
+                        "@BinCount": "10",
+                        "@BinDescription": "bar",
+                    },
+                    {
+                        "@BinCode": "222",
+                        "@BinQuality": "Fail",
+                        "@BinCount": "1",
+                        "@BinDescription": "beef",
+                    },
+                    {
+                        "@BinCode": "255",
+                        "@BinQuality": "NULL",
+                        "@BinCount": "0",
+                        "@BinDescription": "Null bin",
+                    },
+                ],
             }
         }
 
@@ -157,7 +186,7 @@ class TestWaferMap(unittest.TestCase):
                 "@BinType": "Decimal",
                 "Data": {
                     "Row": ["000111", "111222"],
-                }
+                },
             }
         }
 
@@ -184,7 +213,7 @@ class TestWaferMap(unittest.TestCase):
                 "@BinType": "Decimal",
                 "Data": {
                     "Row": ["000111", "111222"],
-                }
+                },
             }
         }
 
@@ -210,7 +239,7 @@ class TestWaferMap(unittest.TestCase):
                 "@BinType": "HexaDecimal",
                 "Data": {
                     "Row": ["0011", "1122"],
-                }
+                },
             }
         }
 
@@ -236,7 +265,7 @@ class TestWaferMap(unittest.TestCase):
                 "@BinType": "Decimal",
                 "Data": {
                     "Row": ["0011", "1122"],
-                }
+                },
             }
         }
 

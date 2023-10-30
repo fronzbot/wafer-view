@@ -118,7 +118,6 @@ class AppTop(wx.Frame):
         self.sizers["right"].Add(self.viewer, 0, wx.ALIGN_CENTER)
         self.sizers["right"].AddStretchSpacer(1)
 
-
     def create_status(self, sizer):
         """Create the data grid table."""
         self.data_grid = semimap.DataGrid(self.grid_panel)

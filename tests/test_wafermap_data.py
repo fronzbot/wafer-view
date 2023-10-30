@@ -2,12 +2,19 @@
 
 import os
 import unittest
-from unittest import mock
 from waferview import wafermap
-from waferview.gui.constants import WAFER_ID, LOT_ID, WAFER_SIZE, CHIP_SIZE, PRODUCT_ID, CREATE_DATE
+from waferview.gui.constants import (
+    WAFER_ID,
+    LOT_ID,
+    WAFER_SIZE,
+    CHIP_SIZE,
+    PRODUCT_ID,
+    CREATE_DATE,
+)
 
 
 TEST_PATH = os.path.split(os.path.abspath(__file__))[0]
+
 
 class TestWaferMapData(unittest.TestCase):
     """Test the WaferMap class on real XML data."""
@@ -54,7 +61,7 @@ class TestWaferMapData(unittest.TestCase):
             WAFER_ID: "ABCD123",
             LOT_ID: "DEADBEEF",
             WAFER_SIZE: 300,
-            CHIP_SIZE: [5000,5000],
+            CHIP_SIZE: [5000, 5000],
             PRODUCT_ID: "FOOBAR",
             CREATE_DATE: "20231028123456",
             "rows": 60,
