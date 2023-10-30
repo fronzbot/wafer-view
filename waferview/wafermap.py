@@ -12,6 +12,8 @@ from waferview.gui.constants import (
     PRODUCT_ID,
     CREATE_DATE,
     DEFAULT_WAFER_SIZE,
+    PASS,
+    NULL
 )
 
 
@@ -69,10 +71,10 @@ class WaferMap:
         bin_incr = 0
         for code in bins:
             code_val = code["@BinCode"]
-            code_pass = code["@BinQuality"] == "Pass"
+            code_pass = code["@BinQuality"] == PASS
             code_desc = code.get("@BinDescription", str(bin_incr))
             code_count = code["@BinCount"]
-            if code["@BinQuality"] == "NULL":
+            if code["@BinQuality"] == NULL:
                 code_pass = None
             self.bin_codes[code_val] = {
                 "status": code_pass,
@@ -84,7 +86,7 @@ class WaferMap:
         if null_bin not in self.bin_codes:
             self.bin_codes[null_bin] = {
                 "status": None,
-                "desc": "NULL",
+                "desc": NULL,
                 "count": None,
             }
 

@@ -6,19 +6,13 @@ from waferview import wafermap
 from waferview.gui import constants
 
 
-def get_bitmap(parent, coord, size, color):
-    """Generate bitmap for a given die."""
-    red, green, blue, alpha = color.Get(includeAlpha=True)
-    box = wx.Bitmap.FromRGBA(size[0], size[1], red, green, blue, alpha)
-    return wx.StaticBitmap(parent, wx.ID_ANY, box, coord, size)
-
-
 class Viewer(wx.Panel):
     """Frame for Wafer Visualization."""
 
     def __init__(self, top, parent, width, height):
         """Initialize the viewer panel."""
         wx.Panel.__init__(self, parent, size=(width, height))
+        self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.top = top
         self.grid = top.data_grid
         self.legend_sizer = top.sizers["legend"]
@@ -27,6 +21,23 @@ class Viewer(wx.Panel):
         self.height = height - 20
         self.xoff = 10
         self.yoff = 0
+        self.pixel_elements = {}
+        self.color_map = {}
+
+    def OnPaint(self, event):
+        self.Refresh()
+        self.Update()
+        dc = wx.PaintDC(self)
+
+        for key, rects in self.pixel_elements.items():
+            try:
+                color = self.color_map[key]
+            except KeyError:
+                color = wx.Colour(constants.NULL_COLOR)
+
+            dc.SetPen(wx.Pen(color, width=1, style=wx.PENSTYLE_SOLID))
+            dc.SetBrush(wx.Brush(color, style=wx.BRUSHSTYLE_SOLID))
+            dc.DrawRectangleList(rects)
 
     def generate_map(self, filename):
         """Generate the wafermap bitmap objects."""
@@ -54,7 +65,6 @@ class Viewer(wx.Panel):
             color = wx.Colour(constants.NULL_COLOR)
             if pixel[2]:
                 color = wx.Colour(constants.PASS_COLOR)
-                # self.color_map[pixel[3]] = constants.PASS_COLOR
                 self.pass_count += 1
                 self.total_count += 1
             elif not pixel[2] and pixel[2] is not None:
@@ -62,11 +72,15 @@ class Viewer(wx.Panel):
                 try:
                     color = wx.Colour(self.color_map[pixel[3]])
                 except KeyError:
-                    self.color_map[pixel[3]] = constants.FAIL_COLOR
+                    color = wx.Colour(constants.FAIL_COLOR)
+
+            self.color_map[pixel[3]] = color
+            rectangle = [loc[0], loc[1], size[0], size[1]]
+
             try:
-                self.pixel_elements[pixel[3]].append(get_bitmap(self, loc, size, color))
+                self.pixel_elements[pixel[3]].append(rectangle)
             except KeyError:
-                self.pixel_elements[pixel[3]] = [get_bitmap(self, loc, size, color)]
+                self.pixel_elements[pixel[3]] = [rectangle]
             col_count += 1
             if col_count > prog_incr:
                 col_count = 0
@@ -82,6 +96,9 @@ class Viewer(wx.Panel):
         )
         self.update_data()
         self.generate_legend()
+
+    def update_pixels(self, key, new_color):
+        self.color_map[key] = wx.Colour(new_color)
 
     def update_data(self):
         """Update data based on wafermap."""
@@ -181,50 +198,11 @@ class LegendEntry(wx.Panel):
             color = self.color
         else:
             color = constants.NULL_COLOR
-        color = wx.Colour(color)
-        new_pixels = []
-        prog_max = len(self.pixels)
-        count = 0
-        dialog = wx.ProgressDialog(
-            "Filtering Die",
-            "Time Remaining",
-            prog_max,
-            style=wx.PD_CAN_ABORT | wx.PD_ELAPSED_TIME | wx.PD_REMAINING_TIME,
-        )
-        for pixel in self.pixels:
-            new_pix = get_bitmap(
-                self.viewer, pixel.GetPosition(), pixel.GetSize(), color
-            )
-            pixel.Destroy()
-            new_pixels.append(new_pix)
-            dialog.Update(count)
-            count += 1
-            if count % 250 == 0:
-                dialog.Update(count)
-        self.pixels = new_pixels
-        dialog.Destroy()
+
+        self.viewer.update_pixels(self.text, color)
 
     def update_color(self, event):
         """Re-draw the bitmaps when the color is changed."""
         color = wx.Colour(self.color_box.GetColour())
-        new_pixels = []
-        prog_max = len(self.pixels)
-        count = 0
-        dialog = wx.ProgressDialog(
-            "Resetting Colors",
-            "Time Remaining",
-            prog_max,
-            style=wx.PD_CAN_ABORT | wx.PD_ELAPSED_TIME | wx.PD_REMAINING_TIME,
-        )
-        for pixel in self.pixels:
-            new_pix = get_bitmap(
-                self.viewer, pixel.GetPosition(), pixel.GetSize(), color
-            )
-            pixel.Destroy()
-            new_pixels.append(new_pix)
-            dialog.Update(count)
-            count += 1
-            if count % 250 == 0:
-                dialog.Update(count)
-        self.pixels = new_pixels
-        dialog.Destroy()
+        self.color = color
+        self.viewer.update_pixels(self.text, color)
