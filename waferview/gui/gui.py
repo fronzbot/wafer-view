@@ -1,5 +1,6 @@
 """GUI module."""
 import wx
+import wx.lib.scrolledpanel as scrolled
 from waferview.gui import semimap
 from waferview.gui import constants
 
@@ -25,7 +26,7 @@ class AppTop(wx.Frame):
         """Create all panels and frames for the GUI."""
         self.create_panels()
         self.create_menu()
-        self.create_status(self.sizers["grid"])
+        self.create_status()
         self.create_viewer()
         self.left_panel.SetSizer(self.sizers["left"])
         self.right_panel.SetSizer(self.sizers["right"])
@@ -36,9 +37,9 @@ class AppTop(wx.Frame):
         """Set the window size."""
         (screen_width, screen_height) = wx.DisplaySize()
         # Limit to 4:3 aspect ratio
-        xSize = int(screen_height * constants.WINDOW_SCALE * constants.ASPECT_RATIO)
-        ySize = int(screen_height * constants.WINDOW_SCALE)
-        self.SetSize(wx.Size(xSize, ySize))
+        self.xSize = int(screen_height * constants.WINDOW_SCALE * constants.ASPECT_RATIO)
+        self.ySize = int(screen_height * constants.WINDOW_SCALE)
+        self.SetSize(wx.Size(self.xSize, self.ySize))
         if not no_center:
             self.Center()
 
@@ -61,7 +62,6 @@ class AppTop(wx.Frame):
         self.viewer_size = (viewerX, viewerY)
         self.data_size = (dataX, dataY)
 
-
     def create_panels(self):
         """Create panel structure and sizer elements."""
         # First the main panel with left and right sub-panels
@@ -77,7 +77,7 @@ class AppTop(wx.Frame):
             size=self.grid_size,
             name="Data Grid",
         )
-        self.legend_panel = wx.Panel(
+        self.legend_panel = scrolled.ScrolledPanel(
             self.left_panel,
             size=self.legend_size,
             pos=self.legend_pos,
@@ -87,7 +87,7 @@ class AppTop(wx.Frame):
         # Add main panels to the primary sizer
         self.main_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.main_sizer.Add(self.left_panel, 0, wx.EXPAND | wx.ALL, border=constants.BORDER_SIZE)
-        self.main_sizer.Add(self.right_panel, 0, wx.EXPAND | wx.ALL, border=constants.BORDER_SIZE)
+        self.main_sizer.Add(self.right_panel, 1, wx.EXPAND | wx.ALL, border=constants.BORDER_SIZE)
         self.top_panel.SetSizer(self.main_sizer)
 
         # Set background colors
@@ -109,8 +109,8 @@ class AppTop(wx.Frame):
         }
 
         # Draw the grid and legend panels at startup
-        self.sizers["left"].Add(self.grid_panel, 0, wx.EXPAND | wx.ALL, border=1)
-        self.sizers["left"].Add(self.legend_panel, 0, wx.EXPAND | wx.ALL, border=2)
+        self.sizers["left"].Add(self.grid_panel, 1, wx.EXPAND | wx.ALL, border=1)
+        self.sizers["left"].Add(self.legend_panel, 1, wx.EXPAND | wx.ALL, border=2)
 
         # Add text to the legend panel
         font = wx.Font(wx.FontInfo(16).Bold())
@@ -118,7 +118,7 @@ class AppTop(wx.Frame):
             self.legend_panel, label="Wafer Map Legend", style=wx.ALIGN_CENTER
         )
         legend_text.SetFont(font)
-        self.sizers["legend"].Add(legend_text, 0, wx.EXPAND | wx.ALL, border=5)
+        self.sizers["legend"].Add(legend_text, 1, wx.ALL|wx.ALIGN_CENTER, border=5)
 
     def create_menu(self):
         """Create the menu bar."""
@@ -134,19 +134,19 @@ class AppTop(wx.Frame):
         except AttributeError:
             pixels = {}
             colors = {}
-        self.sizers["right"].AddStretchSpacer(1)
+#        self.sizers["right"].AddStretchSpacer(1)
         self.viewer = semimap.Viewer(
             self, self.right_panel, self.viewer_size[0], self.viewer_size[1]
         )
         self.viewer.pixel_elements = pixels
         self.viewer.color_map = colors
-        self.sizers["right"].Add(self.viewer, 0, wx.ALIGN_CENTER)
-        self.sizers["right"].AddStretchSpacer(1)
+        self.sizers["right"].Add(self.viewer, 1, wx.EXPAND | wx.ALL)
+#        self.sizers["right"].AddStretchSpacer(1)
 
-    def create_status(self, sizer):
+    def create_status(self):
         """Create the data grid table."""
         self.data_grid = semimap.DataGrid(self.grid_panel)
-        sizer.Add(self.data_grid, 1, wx.EXPAND | wx.ALL)
+        self.sizers["grid"].Add(self.data_grid, 1, wx.ALL)
 
     def map_filename(self):
         """Return the wafermap file name."""

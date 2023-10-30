@@ -21,8 +21,8 @@ class Viewer(wx.Panel):
         self.pixel_elements = {}
         self.color_map = {}
         scale_val = 0.95*min(width, height)
-        self.xoffset = (width - scale_val) / 2
-        self.yoffset = (height - scale_val) / 2
+        self.xoffset = int((0.95*width - scale_val) / 2)
+        self.yoffset = int((0.95*height - scale_val) / 2)
         self.scale = (scale_val, scale_val)
 
     def OnPaint(self, event):
@@ -31,9 +31,10 @@ class Viewer(wx.Panel):
         self.Update()
         dc = wx.PaintDC(self)
         dc.SetPen(wx.Pen(wx.Colour(constants.NULL_COLOR), width=0.1, style=wx.PENSTYLE_SOLID))
-        (width, height) = self.GetSize()
-        xScale = width / self.scale[0]
-        yScale = width / self.scale[1]
+        (width, height) = self.top.right_panel.GetSize()
+        xScale = min(width, height) / self.scale[0]
+        yScale = min(width, height) / self.scale[1]
+        dc.SetUserScale(xScale, yScale)
 
         for key, rects in self.pixel_elements.items():
             try:
@@ -43,7 +44,6 @@ class Viewer(wx.Panel):
 
             dc.SetBrush(wx.Brush(color, style=wx.BRUSHSTYLE_SOLID))
             dc.DrawRectangleList(rects)
-        dc.SetUserScale(xScale, yScale)
 
 
     def generate_map(self, filename):
@@ -130,12 +130,14 @@ class Viewer(wx.Panel):
                     color,
                 ),
                 1,
-                wx.EXPAND,
+                wx.EXPAND|wx.ALIGN_TOP,
             )
 
+        self.top.legend_panel.SetSizer(self.legend_sizer)
+        self.top.legend_panel.SetupScrolling()
         # Super janky, but only way I could get the legend to draw
         (sw, sh) = wx.DisplaySize()
-        self.top.SetSize(wx.Size(sw * constants.WINDOW_SCALE - 1, sh * constants.WINDOW_SCALE - 1))
+        self.top.SetSize(wx.Size(min(sw, sh) * constants.WINDOW_SCALE - 1, min(sw, sh) * constants.WINDOW_SCALE - 1))
         self.top.window(no_center=True)
 
 
@@ -189,7 +191,7 @@ class LegendEntry(wx.Panel):
         self.check_box.SetValue(True)
         self.Bind(wx.EVT_CHECKBOX, self.toggle_highlight)
 
-        self.sizer.Add(self.text_panel, 1, wx.EXPAND | wx.ALL, border=2)
+        self.sizer.Add(self.text_panel, 1, wx.ALL, border=2)
 
     def create_color_picker(self):
         """Create the legend color chooser."""
