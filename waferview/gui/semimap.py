@@ -31,13 +31,12 @@ class Viewer(wx.Panel):
         self.Update()
         dc = wx.PaintDC(self)
         dc.SetPen(
-            wx.Pen(wx.Colour(constants.NULL_COLOR), width=0.1, style=wx.PENSTYLE_SOLID)
+            wx.Pen(wx.Colour(constants.NULL_COLOR), width=0, style=wx.PENSTYLE_SOLID)
         )
         (width, height) = self.top.right_panel.GetSize()
         xScale = min(width, height) / self.scale[0]
         yScale = min(width, height) / self.scale[1]
         dc.SetUserScale(xScale, yScale)
-
         for key, rects in self.pixel_elements.items():
             try:
                 color = self.color_map[key]
@@ -137,14 +136,9 @@ class Viewer(wx.Panel):
         self.top.legend_panel.SetSizer(self.legend_sizer)
         self.top.legend_panel.SetupScrolling()
         # Super janky, but only way I could get the legend to draw
-        (sw, sh) = wx.DisplaySize()
-        self.top.SetSize(
-            wx.Size(
-                min(sw, sh) * constants.WINDOW_SCALE - 1,
-                min(sw, sh) * constants.WINDOW_SCALE - 1,
-            )
-        )
-        self.top.window(no_center=True)
+        (sw, sh) = self.top.GetSize()
+        self.top.SetSize(wx.Size(sw - 1, sh - 1))
+        self.top.SetSize(wx.Size(sw, sh))
 
 
 class DataGrid(wx.grid.Grid):

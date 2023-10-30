@@ -33,7 +33,7 @@ class AppTop(wx.Frame):
         self.grid_panel.SetSizerAndFit(self.sizers["grid"])
         self.legend_panel.SetSizer(self.sizers["legend"])
 
-    def window(self, no_center=False):
+    def window(self):
         """Set the window size."""
         (screen_width, screen_height) = wx.DisplaySize()
         # Limit to 4:3 aspect ratio
@@ -42,8 +42,6 @@ class AppTop(wx.Frame):
         )
         self.ySize = int(screen_height * constants.WINDOW_SCALE)
         self.SetSize(wx.Size(self.xSize, self.ySize))
-        if not no_center:
-            self.Center()
 
     def get_panel_sizes(self):
         """Get panel sizes based on screen size."""
@@ -132,6 +130,7 @@ class AppTop(wx.Frame):
         try:
             pixels = self.viewer.pixel_elements
             colors = self.viewer.color_map
+            scale = self.viewer.scale
             self.viewer.Destroy()
         except AttributeError:
             pixels = {}
@@ -140,7 +139,10 @@ class AppTop(wx.Frame):
         self.viewer = semimap.Viewer(
             self, self.right_panel, self.viewer_size[0], self.viewer_size[1]
         )
-        self.viewer.pixel_elements = pixels
+        try:
+            self.viewer.scale = scale
+        except UnboundLocalError:
+            self.viewer.pixel_elements = pixels
         self.viewer.color_map = colors
         self.sizers["right"].Add(self.viewer, 1, wx.EXPAND | wx.ALL)
 
