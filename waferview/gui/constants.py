@@ -22,4 +22,7 @@ CREATE_DATE = "created"
 ALL_KEYS = [WAFER_ID, LOT_ID, CHIP_SIZE, PRODUCT_ID, CREATE_DATE]
 
 # Various constants
+PASS = "Pass"
+FAIL = "Fail"
+NULL = "NULL"
 DEFAULT_WAFER_SIZE = 300
