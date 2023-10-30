@@ -91,12 +91,6 @@ class AppTop(wx.Frame):
             size=self.grid_size,
             name="Data Grid",
         )
-        self.legend_panel = scrolled.ScrolledPanel(
-            self.left_panel,
-            size=self.legend_size,
-            pos=self.legend_pos,
-            name="Legend",
-        )
 
         # Add main panels to the primary sizer
         self.main_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -123,20 +117,10 @@ class AppTop(wx.Frame):
             "left": wx.BoxSizer(wx.VERTICAL),
             "right": wx.BoxSizer(),
             "grid": wx.BoxSizer(),
-            "legend": wx.BoxSizer(wx.VERTICAL),
         }
 
         # Draw the grid and legend panels at startup
         self.sizers["left"].Add(self.grid_panel, 1, wx.EXPAND | wx.ALL, border=1)
-        self.sizers["left"].Add(self.legend_panel, 1, wx.EXPAND | wx.ALL, border=2)
-
-        # Add text to the legend panel
-        font = wx.Font(wx.FontInfo(16).Bold())
-        legend_text = wx.StaticText(
-            self.legend_panel, label="Wafer Map Legend", style=wx.ALIGN_CENTER
-        )
-        legend_text.SetFont(font)
-        self.sizers["legend"].Add(legend_text, 1, wx.ALL | wx.ALIGN_CENTER, border=5)
 
     def create_menu(self):
         """Create the menu bar."""
@@ -152,7 +136,7 @@ class AppTop(wx.Frame):
         except AttributeError:
             pixels = {}
             colors = {}
-        #        self.sizers["right"].AddStretchSpacer(1)
+        self.create_legend()
         self.viewer = semimap.Viewer(
             self, self.right_panel, self.viewer_size[0], self.viewer_size[1]
         )
@@ -160,7 +144,26 @@ class AppTop(wx.Frame):
         self.viewer.color_map = colors
         self.sizers["right"].Add(self.viewer, 1, wx.EXPAND | wx.ALL)
 
-    #        self.sizers["right"].AddStretchSpacer(1)
+    def create_legend(self):
+        """Create the legend section."""
+        try:
+            self.legend_panel.Destroy()
+        except AttributeError:
+            pass
+        self.legend_panel = scrolled.ScrolledPanel(
+            self.left_panel,
+            size=self.legend_size,
+            pos=self.legend_pos,
+            name="Legend",
+        )
+        self.sizers["left"].Add(self.legend_panel, 1, wx.EXPAND | wx.ALL, border=2)
+        self.sizers["legend"] = wx.BoxSizer(wx.VERTICAL)
+        font = wx.Font(wx.FontInfo(16).Bold())
+        legend_text = wx.StaticText(
+            self.legend_panel, label="Wafer Map Legend", style=wx.ALIGN_CENTER
+        )
+        legend_text.SetFont(font)
+        self.sizers["legend"].Add(legend_text, 1, wx.ALL | wx.ALIGN_CENTER, border=5)
 
     def create_status(self):
         """Create the data grid table."""
