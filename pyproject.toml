@@ -5,11 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "wafer-view"
 version = "1.0.0-alpha"
-license = "Apache-2.0"
+license = {file = "LICENSE"}
 description = "An open source semi.org xml wafer viewer"
 readme = "README.rst"
 authors = [
-    {name = "Kevin Fronczak", email = "kfronczak@gmail.com"},
+    {name = "Kevin Fronczak", email = "kfronczak@gmail.com"}
 ]
 maintainers = [
     {name = "Kevin Fronczak", email = "kfronczak@gmail.com"},

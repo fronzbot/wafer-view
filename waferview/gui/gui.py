@@ -1,8 +1,12 @@
 """GUI module."""
+import importlib.metadata
 import wx
+import wx.adv
 import wx.lib.scrolledpanel as scrolled
 from waferview.gui import semimap
 from waferview.gui import constants
+
+__version__ = importlib.metadata.version("wafer-view")
 
 
 def run():
@@ -193,6 +197,61 @@ class MenuBar(wx.MenuBar):
         filemenu.Append(wx.ID_OPEN, "O&pen\tCtrl-O")
         filemenu.Append(wx.ID_EXIT, "E&xit\tAlt-X", "Close window and exit program")
         self.parent.Bind(wx.EVT_MENU, self.file_browser, id=wx.ID_OPEN)
+
+        helpmenu = wx.Menu()
+        self.Append(helpmenu, "&Help")
+        helpmenu.Append(wx.ID_ABOUT, "", "About Waferview")
+        self.parent.Bind(wx.EVT_MENU, self.about_screen, id=wx.ID_ABOUT)
+
+    def about_screen(self, event):
+        """Open the About dialog on event."""
+        about = wx.Frame(None, title="About Waferview")
+        panel = wx.Panel(about, 0)
+
+        sizer_top = wx.BoxSizer(wx.VERTICAL)
+        flex_sizer = wx.FlexGridSizer(1, 6, 2)
+
+        title_font = wx.Font(wx.FontInfo(16).Bold())
+
+        title_str = wx.StaticText(
+            panel,
+            label="Wafer View: Open Source Wafer Map Viewer",
+            style=wx.ALIGN_CENTER,
+        )
+        version_str = wx.StaticText(
+            panel, label=f"Version: {__version__}", style=wx.ALIGN_CENTER
+        )
+        license_str = wx.StaticText(
+            panel, label="License: Apache 2.0", style=wx.ALIGN_CENTER
+        )
+        author_str = wx.StaticText(
+            panel,
+            label="Author: Kevin Fronczak <kfronczak@gmail.com>",
+            style=wx.ALIGN_CENTER,
+        )
+        source_str = wx.adv.HyperlinkCtrl(
+            panel,
+            label="View Source Code",
+            url="https://github.com/fronzbot/wafer-view",
+        )
+        copy_str = wx.StaticText(panel, label="(c) 2023", style=wx.ALIGN_CENTER)
+
+        title_str.SetFont(title_font)
+
+        flex_sizer.AddMany(
+            [
+                (title_str, 1, wx.ALIGN_CENTER),
+                (version_str, 1, wx.ALIGN_CENTER),
+                (license_str, 1, wx.ALIGN_LEFT),
+                (author_str, 1, wx.ALIGN_LEFT),
+                (source_str, 1, wx.ALIGN_CENTER),
+                (copy_str, 1, wx.ALIGN_CENTER),
+            ]
+        )
+        sizer_top.Add(flex_sizer, 0, wx.ALL | wx.EXPAND, border=constants.BORDER_SIZE)
+        panel.SetSizerAndFit(sizer_top)
+        about.Centre()
+        about.Show()
 
     def file_browser(self, event):
         """Open the file browser on event."""
