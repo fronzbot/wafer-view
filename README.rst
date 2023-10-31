@@ -68,6 +68,47 @@ Usage
 
 Once installed, running the command `waferview` will open up the Wafer View GUI. Using the File menu, an xml wafermap can be loaded and viewed. Each bin can be independantly enabled/disabled and the color scheme can be changed on the fly to easily find where failures occur on a die. The wafer image can also be saved as a bitmap.
 
+Available keyboard shortcuts:
+
++--------------------+--------------------+
+| Event              | Key(s)             |
++====================+====================+
+| Pan Left           | Left Arrow         |
+|                    +--------------------+
+|                    | h                  |
++--------------------+--------------------+
+| Pan Right          | Right Arrow        |
+|                    +--------------------+
+|                    | l                  |
++--------------------+--------------------+
+| Pan Up             | Up Arrow           |
+|                    +--------------------+
+|                    | k                  |
++--------------------+--------------------+
+| Pan Down           | Down Arrow         |
+|                    +--------------------+
+|                    | j                  |
++--------------------+--------------------+
+| Zoom In            | Page Down          |
+|                    +--------------------+
+|                    | ]                  |
+|                    +--------------------+
+|                    | +                  |
++--------------------+--------------------+
+| Zoom Out           | Page Up            |
+|                    +--------------------+
+|                    | [                  |
+|                    +--------------------+
+|                    | -                  |
++--------------------+--------------------+
+| Fit                | f                  |
+|                    +--------------------+
+|                    | 0                  |
++--------------------+--------------------+
+| Open               | Ctrl/Cmd + O       |
++--------------------+--------------------+
+| Save               | Ctrl/Cmd + S       |
++--------------------+--------------------+
 
 .. |Build Status| image:: https://github.com/fronzbot/wafer-view/workflows/build/badge.svg
    :target: https://github.com/fronzbot/wafer-view/actions?query=workflow%3Abuild
