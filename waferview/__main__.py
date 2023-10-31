@@ -1,4 +1,6 @@
 """Main function for GUI."""
 from waferview.gui import gui
 
-gui.run()
+def main():
+    """Start the GUI."""
+    gui.run()

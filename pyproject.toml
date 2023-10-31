@@ -27,7 +27,7 @@ requires-python = ">=3.8.0"
 dynamic = ["dependencies"]
 
 [project.scripts]
-waferview = "waferview:__main__"
+waferview = "waferview.__main__:main"
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
