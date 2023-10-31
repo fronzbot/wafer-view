@@ -42,7 +42,6 @@ class Viewer(wx.Panel):
         dc.SetUserScale(xScale, yScale)
         dc.SetLogicalOrigin(self.xorigin, self.yorigin)
         for key, rects in self.pixel_elements.items():
-            print(rects)
             try:
                 color = self.color_map[key]
             except KeyError:
