@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wafer-view"
-version = "1.0.0-alpha"
-license = "Apache-2.0"
+version = "1.0.0-beta"
+license = {file = "LICENSE"}
 description = "An open source semi.org xml wafer viewer"
 readme = "README.rst"
 authors = [
-    {name = "Kevin Fronczak", email = "kfronczak@gmail.com"},
+    {name = "Kevin Fronczak", email = "kfronczak@gmail.com"}
 ]
 maintainers = [
     {name = "Kevin Fronczak", email = "kfronczak@gmail.com"},
@@ -25,6 +25,9 @@ classifiers = [
 ]
 requires-python = ">=3.8.0"
 dynamic = ["dependencies"]
+
+[project.scripts]
+waferview = "waferview:__main__"
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
@@ -87,7 +90,7 @@ ignore = [
 
 line-length = 88
 
-target-version = "py39"
+target-version = "py311"
 
 [tool.ruff.per-file-ignores]
 
