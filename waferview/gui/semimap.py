@@ -40,7 +40,7 @@ class Viewer(wx.Panel):
         xScale = self.zoom_factor * min(width, height) / self.scale[0]
         yScale = self.zoom_factor * min(width, height) / self.scale[1]
         dc.SetUserScale(xScale, yScale)
-        dc.SetLogicalOrigin(self.xorigin, self.yorigin)
+        dc.SetLogicalOrigin(int(self.xorigin), int(self.yorigin))
         for key, rects in self.pixel_elements.items():
             try:
                 color = self.color_map[key]
