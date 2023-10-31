@@ -20,7 +20,20 @@ Installation
 Pre-Requisites
 ```````````````
 
-If you are running MacOS or Windows, please skip this section.
+It is highly recommended to use a VirtualEnv to install the tool. This is done as follows (the location of the venv can be anywhere):
+
+.. code-block::
+
+   python -m ~/venv/waferview
+
+Once created, you must activate the venv before running the tool:
+
+.. code-block::
+
+   source ~/venv/waferview/bin/activate
+
+
+If you are running MacOS or Windows, please skip this next section.
 For linux systems, you may need to install GTK. This is done as follows (using Debian commands as an example):
 
 .. code-block::
@@ -30,6 +43,8 @@ For linux systems, you may need to install GTK. This is done as follows (using D
 
 From PyPi (Preferred)
 ``````````````````````
+
+Note: this should be done _after_ sourcing the venv
 
 .. code-block::
 
@@ -45,6 +60,7 @@ Clone the github repository and install
     git clone https://github.com/fronzbot/wafer-view.git
     cd wafer\-view
     git checkout main
+    <follow venv instructions here (from above)>
     pip install .
 
 Usage
