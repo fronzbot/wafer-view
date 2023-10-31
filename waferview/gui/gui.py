@@ -67,7 +67,7 @@ class AppTop(wx.Frame):
 
         self.grid_size = (dataX, int(self.panel_size[1] * constants.GRID_SCALE))
         self.legend_size = (dataX, int(self.panel_size[1] * constants.LEGEND_SCALE))
-        self.control_size = (dataX, 30)
+        self.control_size = (dataX, 50)
 
         self.legend_pos = (
             constants.BORDER_SIZE + 5,
@@ -98,9 +98,7 @@ class AppTop(wx.Frame):
         )
 
         self.control_panel = wx.Panel(
-            self.left_panel,
-            size=self.control_size,
-            name="Control Panel."
+            self.left_panel, size=self.control_size, name="Control Panel."
         )
 
         # Add main panels to the primary sizer
@@ -161,15 +159,30 @@ class AppTop(wx.Frame):
 
     def create_controls(self):
         """Create the wafermap controls section."""
-        self.sizers["control"] = wx.BoxSizer(wx.HORIZONTAL)
+        self.sizers["control"] = wx.FlexGridSizer(rows=2, cols=4, gap=wx.Size(1, 3))
+        btn_down = wx.Button(self.control_panel, 1, "Down", size=(10, 10))
+        btn_up = wx.Button(self.control_panel, 1, "Up")
+        btn_left = wx.Button(self.control_panel, 1, "Left")
+        btn_right = wx.Button(self.control_panel, 1, "Right")
         btn_zoom_out = wx.Button(self.control_panel, 1, "Zoom -")
         btn_zoom_in = wx.Button(self.control_panel, 1, "Zoom +")
         btn_fit = wx.Button(self.control_panel, 1, "Fit")
+
+        self.sizers["control"].Add(btn_down, -1, wx.EXPAND | wx.ALL, border=1)
+        self.sizers["control"].Add(btn_up, -1, wx.EXPAND | wx.ALL, border=1)
+        self.sizers["control"].Add(btn_left, -1, wx.EXPAND | wx.ALL, border=1)
+        self.sizers["control"].Add(btn_right, -1, wx.EXPAND | wx.ALL, border=1)
         self.sizers["control"].Add(btn_zoom_out, -1, wx.EXPAND | wx.ALL, border=1)
         self.sizers["control"].Add(btn_zoom_in, -1, wx.EXPAND | wx.ALL, border=1)
         self.sizers["control"].Add(btn_fit, -1, wx.EXPAND | wx.ALL, border=1)
+
         self.control_panel.SetSizer(self.sizers["control"])
         self.sizers["left"].Add(self.control_panel, 1, wx.EXPAND | wx.ALL, border=1)
+
+        btn_down.Bind(wx.EVT_BUTTON, lambda event: self.set_offset(event, (0, 10)))
+        btn_up.Bind(wx.EVT_BUTTON, lambda event: self.set_offset(event, (0, -10)))
+        btn_left.Bind(wx.EVT_BUTTON, lambda event: self.set_offset(event, (-10, 0)))
+        btn_right.Bind(wx.EVT_BUTTON, lambda event: self.set_offset(event, (10, 0)))
         btn_zoom_out.Bind(wx.EVT_BUTTON, lambda event: self.set_scale(event, 0.9))
         btn_zoom_in.Bind(wx.EVT_BUTTON, lambda event: self.set_scale(event, 1.1))
         btn_fit.Bind(wx.EVT_BUTTON, lambda event: self.set_scale(event, 0))
@@ -208,8 +221,16 @@ class AppTop(wx.Frame):
         """Set wafermap scaling based on zoom button input."""
         if zoom_type == 0:
             self.viewer.zoom_factor = 1
+            self.viewer.xorigin = 0
+            self.viewer.yorigin = 0
             return
         self.viewer.zoom_factor = zoom_type * self.viewer.zoom_factor
+
+    def set_offset(self, event, offset):
+        """Set the frame offset."""
+        self.viewer.xorigin = self.viewer.xorigin + offset[0] * self.viewer.zoom_factor
+        self.viewer.yorigin = self.viewer.yorigin + offset[1] * self.viewer.zoom_factor
+        self.viewer.OnPaint(None)
 
 
 class MenuBar(wx.MenuBar):
