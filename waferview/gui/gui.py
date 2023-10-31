@@ -168,10 +168,11 @@ class AppTop(wx.Frame):
         btn_zoom_in = wx.Button(self.control_panel, 1, "Zoom +")
         btn_fit = wx.Button(self.control_panel, 1, "Fit")
 
+        self.sizers["control"].Add(btn_left, -1, wx.EXPAND | wx.ALL, border=1)
         self.sizers["control"].Add(btn_down, -1, wx.EXPAND | wx.ALL, border=1)
         self.sizers["control"].Add(btn_up, -1, wx.EXPAND | wx.ALL, border=1)
-        self.sizers["control"].Add(btn_left, -1, wx.EXPAND | wx.ALL, border=1)
         self.sizers["control"].Add(btn_right, -1, wx.EXPAND | wx.ALL, border=1)
+
         self.sizers["control"].Add(btn_zoom_out, -1, wx.EXPAND | wx.ALL, border=1)
         self.sizers["control"].Add(btn_zoom_in, -1, wx.EXPAND | wx.ALL, border=1)
         self.sizers["control"].Add(btn_fit, -1, wx.EXPAND | wx.ALL, border=1)
@@ -179,10 +180,11 @@ class AppTop(wx.Frame):
         self.control_panel.SetSizer(self.sizers["control"])
         self.sizers["left"].Add(self.control_panel, 1, wx.EXPAND | wx.ALL, border=1)
 
+        btn_left.Bind(wx.EVT_BUTTON, lambda event: self.set_offset(event, (-10, 0)))
         btn_down.Bind(wx.EVT_BUTTON, lambda event: self.set_offset(event, (0, 10)))
         btn_up.Bind(wx.EVT_BUTTON, lambda event: self.set_offset(event, (0, -10)))
-        btn_left.Bind(wx.EVT_BUTTON, lambda event: self.set_offset(event, (-10, 0)))
         btn_right.Bind(wx.EVT_BUTTON, lambda event: self.set_offset(event, (10, 0)))
+
         btn_zoom_out.Bind(wx.EVT_BUTTON, lambda event: self.set_scale(event, 0.9))
         btn_zoom_in.Bind(wx.EVT_BUTTON, lambda event: self.set_scale(event, 1.1))
         btn_fit.Bind(wx.EVT_BUTTON, lambda event: self.set_scale(event, 0))
