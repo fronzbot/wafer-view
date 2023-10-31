@@ -42,6 +42,7 @@ class Viewer(wx.Panel):
         dc.SetUserScale(xScale, yScale)
         dc.SetLogicalOrigin(self.xorigin, self.yorigin)
         for key, rects in self.pixel_elements.items():
+            print(rects)
             try:
                 color = self.color_map[key]
             except KeyError:
@@ -71,10 +72,10 @@ class Viewer(wx.Panel):
         )
         for pixel in self.wmap.pixels:
             loc = (
-                pixel[0][0] * self.scale[0] + self.xoffset,
-                pixel[0][1] * self.scale[1] + self.yoffset,
+                int(pixel[0][0] * self.scale[0] + self.xoffset),
+                int(pixel[0][1] * self.scale[1] + self.yoffset),
             )
-            size = (pixel[1][0] * self.scale[0], pixel[1][1] * self.scale[1] - 1)
+            size = (int(pixel[1][0] * self.scale[0]), int(pixel[1][1] * self.scale[1]))
             color = wx.Colour(constants.NULL_COLOR)
             if pixel[2]:
                 color = wx.Colour(constants.PASS_COLOR)
