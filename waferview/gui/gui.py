@@ -156,6 +156,7 @@ class AppTop(wx.Frame):
             self.viewer.pixel_elements = pixels
         self.viewer.color_map = colors
         self.sizers["right"].Add(self.viewer, 1, wx.EXPAND | wx.ALL)
+        self.viewer.Bind(wx.EVT_CHAR, self.process_keypress)
 
     def create_controls(self):
         """Create the wafermap controls section."""
@@ -233,6 +234,12 @@ class AppTop(wx.Frame):
         self.viewer.xorigin = self.viewer.xorigin + offset[0] * self.viewer.zoom_factor
         self.viewer.yorigin = self.viewer.yorigin + offset[1] * self.viewer.zoom_factor
         self.viewer.OnPaint(None)
+
+    def process_keypress(self, event):
+        """Process a keypress event."""
+        key_input = event.GetKeyCode()
+        if chr(key_input) == "h":
+            print("Hell yeah")
 
 
 class MenuBar(wx.MenuBar):
