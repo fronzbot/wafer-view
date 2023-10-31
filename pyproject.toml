@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wafer-view"
-version = "1.0.0b2"
+version = "1.0.0b3"
 license = {file = "LICENSE"}
 description = "An open source semi.org xml wafer viewer"
 readme = "README.rst"
@@ -17,13 +17,12 @@ maintainers = [
 classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: MacOS",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Topic :: Scientific/Engineering :: Visualization",
 ]
-requires-python = ">=3.8.0"
+requires-python = ">=3.9.0"
 dynamic = ["dependencies"]
 
 [project.scripts]
