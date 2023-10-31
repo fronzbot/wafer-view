@@ -38,15 +38,14 @@ From PyPi (Preferred)
 From Github
 `````````````
 
-Clone the github repository and run `python -m waferview`
+Clone the github repository and install
 
 .. code-block::
 
     git clone https://github.com/fronzbot/wafer-view.git
     cd wafer\-view
-    pip install -r requirements.txt
-    python -m waferview
-
+    git checkout main
+    pip install .
 
 Usage
 ------
