@@ -32,6 +32,7 @@ class AppTop(wx.Frame):
         self.create_panels()
         self.create_menu()
         self.create_status()
+        self.create_controls()
         self.create_viewer()
         self.left_panel.SetSizer(self.sizers["left"])
         self.right_panel.SetSizer(self.sizers["right"])
@@ -66,6 +67,7 @@ class AppTop(wx.Frame):
 
         self.grid_size = (dataX, int(self.panel_size[1] * constants.GRID_SCALE))
         self.legend_size = (dataX, int(self.panel_size[1] * constants.LEGEND_SCALE))
+        self.control_size = (dataX, 30)
 
         self.legend_pos = (
             constants.BORDER_SIZE + 5,
@@ -95,6 +97,12 @@ class AppTop(wx.Frame):
             name="Data Grid",
         )
 
+        self.control_panel = wx.Panel(
+            self.left_panel,
+            size=self.control_size,
+            name="Control Panel."
+        )
+
         # Add main panels to the primary sizer
         self.main_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.main_sizer.Add(
@@ -117,7 +125,7 @@ class AppTop(wx.Frame):
 
         # Create sizers for other panels
         self.sizers = {
-            "left": wx.BoxSizer(wx.VERTICAL),
+            "left": wx.FlexGridSizer(rows=3, cols=1, vgap=1, hgap=1),
             "right": wx.BoxSizer(),
             "grid": wx.BoxSizer(),
         }
@@ -151,6 +159,21 @@ class AppTop(wx.Frame):
         self.viewer.color_map = colors
         self.sizers["right"].Add(self.viewer, 1, wx.EXPAND | wx.ALL)
 
+    def create_controls(self):
+        """Create the wafermap controls section."""
+        self.sizers["control"] = wx.BoxSizer(wx.HORIZONTAL)
+        btn_zoom_out = wx.Button(self.control_panel, 1, "Zoom -")
+        btn_zoom_in = wx.Button(self.control_panel, 1, "Zoom +")
+        btn_fit = wx.Button(self.control_panel, 1, "Fit")
+        self.sizers["control"].Add(btn_zoom_out, -1, wx.EXPAND | wx.ALL, border=1)
+        self.sizers["control"].Add(btn_zoom_in, -1, wx.EXPAND | wx.ALL, border=1)
+        self.sizers["control"].Add(btn_fit, -1, wx.EXPAND | wx.ALL, border=1)
+        self.control_panel.SetSizer(self.sizers["control"])
+        self.sizers["left"].Add(self.control_panel, 1, wx.EXPAND | wx.ALL, border=1)
+        btn_zoom_out.Bind(wx.EVT_BUTTON, lambda event: self.set_scale(event, 0.9))
+        btn_zoom_in.Bind(wx.EVT_BUTTON, lambda event: self.set_scale(event, 1.1))
+        btn_fit.Bind(wx.EVT_BUTTON, lambda event: self.set_scale(event, 0))
+
     def create_legend(self):
         """Create the legend section."""
         try:
@@ -180,6 +203,13 @@ class AppTop(wx.Frame):
     def map_filename(self):
         """Return the wafermap file name."""
         return self.filemenu.file_name
+
+    def set_scale(self, event, zoom_type):
+        """Set wafermap scaling based on zoom button input."""
+        if zoom_type == 0:
+            self.viewer.zoom_factor = 1
+            return
+        self.viewer.zoom_factor = zoom_type * self.viewer.zoom_factor
 
 
 class MenuBar(wx.MenuBar):
