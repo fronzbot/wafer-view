@@ -269,19 +269,16 @@ class AppTop(wx.Frame):
 
     def set_scale(self, event, zoom_type):
         """Set wafermap scaling based on zoom button input."""
-        self.viewer.zoom_factor = zoom_type * self.viewer.zoom_factor
+        self.viewer.transform.Scale(zoom_type, zoom_type)
         if zoom_type == 0:
-            self.viewer.zoom_factor = 1
-            self.viewer.xorigin = 0
-            self.viewer.yorigin = 0
+            self.viewer.transform = wx.AffineMatrix2D()
 
         self.viewer.Refresh()
         self.viewer.Update()
 
     def set_offset(self, event, offset):
         """Set the frame offset."""
-        self.viewer.xorigin = self.viewer.xorigin + offset[0] * self.viewer.zoom_factor
-        self.viewer.yorigin = self.viewer.yorigin + offset[1] * self.viewer.zoom_factor
+        self.viewer.transform.Translate(-1 * offset[0], -1 * offset[1])
         self.viewer.Refresh()
         self.viewer.Update()
 
