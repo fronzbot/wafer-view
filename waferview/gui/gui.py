@@ -38,6 +38,10 @@ class AppTop(wx.Frame):
         self.right_panel.SetSizer(self.sizers["right"])
         self.grid_panel.SetSizerAndFit(self.sizers["grid"])
         self.legend_panel.SetSizer(self.sizers["legend"])
+        # Super janky, but only way I could get everything to work in windows
+        (sw, sh) = self.GetSize()
+        self.SetSize(wx.Size(sw - 1, sh - 1))
+        self.SetSize(wx.Size(sw, sh))
 
     def window(self):
         """Set the window size."""
@@ -76,6 +80,7 @@ class AppTop(wx.Frame):
 
         self.viewer_size = (viewerX, viewerY)
         self.data_size = (dataX, dataY)
+      
 
     def create_panels(self):
         """Create panel structure and sizer elements."""
@@ -156,7 +161,7 @@ class AppTop(wx.Frame):
             self.viewer.pixel_elements = pixels
         self.viewer.color_map = colors
         self.sizers["right"].Add(self.viewer, 1, wx.EXPAND | wx.ALL)
-        self.viewer.Bind(wx.EVT_CHAR, self.process_keypress)
+        self.viewer.Bind(wx.EVT_KEY_DOWN, self.process_keypress)
 
     def create_controls(self):
         """Create the wafermap controls section."""
@@ -204,14 +209,22 @@ class AppTop(wx.Frame):
 
         # Key mapping for events
         self.key_map = {
+            wx.WXK_NUMPAD4: ("step", constants.STEP_LEFT),
             wx.WXK_LEFT: ("step", constants.STEP_LEFT),
+            wx.WXK_NUMPAD2: ("step", constants.STEP_DOWN),
             wx.WXK_DOWN: ("step", constants.STEP_DOWN),
+            wx.WXK_NUMPAD8: ("step", constants.STEP_UP),
             wx.WXK_UP: ("step", constants.STEP_UP),
+            wx.WXK_NUMPAD6: ("step", constants.STEP_RIGHT),
             wx.WXK_RIGHT: ("step", constants.STEP_RIGHT),
             ord("h"): ("step", constants.STEP_LEFT),
+            ord("H"): ("step", constants.STEP_LEFT),
             ord("j"): ("step", constants.STEP_DOWN),
+            ord("J"): ("step", constants.STEP_DOWN),
             ord("k"): ("step", constants.STEP_UP),
+            ord("K"): ("step", constants.STEP_UP),
             ord("l"): ("step", constants.STEP_RIGHT),
+            ord("L"): ("step", constants.STEP_RIGHT),
             wx.WXK_PAGEDOWN: ("zoom", constants.ZOOM_IN),
             wx.WXK_PAGEUP: ("zoom", constants.ZOOM_OUT),
             wx.WXK_NUMPAD_ADD: ("zoom", constants.ZOOM_IN),
@@ -221,6 +234,7 @@ class AppTop(wx.Frame):
             ord("]"): ("zoom", constants.ZOOM_IN),
             ord("["): ("zoom", constants.ZOOM_OUT),
             ord("f"): ("zoom", 0),
+            ord("F"): ("zoom", 0),
             ord("0"): ("zoom", 0),
         }
 
@@ -256,24 +270,26 @@ class AppTop(wx.Frame):
 
     def set_scale(self, event, zoom_type):
         """Set wafermap scaling based on zoom button input."""
+        self.viewer.zoom_factor = zoom_type * self.viewer.zoom_factor
         if zoom_type == 0:
             self.viewer.zoom_factor = 1
             self.viewer.xorigin = 0
             self.viewer.yorigin = 0
-            self.viewer.OnPaint(None)
-            return
-        self.viewer.zoom_factor = zoom_type * self.viewer.zoom_factor
-        self.viewer.OnPaint(None)
+        
+        self.viewer.Refresh()
+        self.viewer.Update()
 
     def set_offset(self, event, offset):
         """Set the frame offset."""
         self.viewer.xorigin = self.viewer.xorigin + offset[0] * self.viewer.zoom_factor
         self.viewer.yorigin = self.viewer.yorigin + offset[1] * self.viewer.zoom_factor
-        self.viewer.OnPaint(None)
+        self.viewer.Refresh()
+        self.viewer.Update()
 
     def process_keypress(self, event):
         """Process a keypress event."""
         key_input = event.GetKeyCode()
+        print(chr(key_input))
         key_data = self.key_map.get(key_input, (None, None))
         if key_data[0] == "step":
             self.set_offset(None, key_data[1])
