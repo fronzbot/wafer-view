@@ -14,6 +14,7 @@ class Viewer(wx.Panel):
         width, height = parent.GetSize()
         wx.Panel.__init__(self, parent, size=(width, height))
         self.Bind(wx.EVT_PAINT, self.OnPaint)
+        self.SetBackgroundColour(constants.NULL_COLOR)
         self.top = top
         self.grid = top.data_grid
         self.legend_sizer = top.sizers["legend"]
@@ -27,20 +28,18 @@ class Viewer(wx.Panel):
         self.xoffset = int((0.95 * width - scale_val) / 2)
         self.yoffset = int((0.95 * height - scale_val) / 2)
         self.scale = (scale_val, scale_val)
+        self.transform = wx.AffineMatrix2D()
 
-    def OnPaint(self, event):
+    def OnPaint(self, event=None):
         """Handle painting events."""
         self.Refresh()
         self.Update()
         dc = wx.PaintDC(self)
+        dc.SetTransformMatrix(self.transform)
+        dc.Clear()
         dc.SetPen(
             wx.Pen(wx.Colour(constants.NULL_COLOR), width=0, style=wx.PENSTYLE_SOLID)
         )
-        (width, height) = self.top.right_panel.GetSize()
-        xScale = self.zoom_factor * min(width, height) / self.scale[0]
-        yScale = self.zoom_factor * min(width, height) / self.scale[1]
-        dc.SetUserScale(xScale, yScale)
-        dc.SetLogicalOrigin(self.xorigin, self.yorigin)
         for key, rects in self.pixel_elements.items():
             try:
                 color = self.color_map[key]
@@ -71,10 +70,10 @@ class Viewer(wx.Panel):
         )
         for pixel in self.wmap.pixels:
             loc = (
-                pixel[0][0] * self.scale[0] + self.xoffset,
-                pixel[0][1] * self.scale[1] + self.yoffset,
+                int(pixel[0][0] * self.scale[0] + self.xoffset),
+                int(pixel[0][1] * self.scale[1] + self.yoffset),
             )
-            size = (pixel[1][0] * self.scale[0], pixel[1][1] * self.scale[1] - 1)
+            size = (int(pixel[1][0] * self.scale[0]), int(pixel[1][1] * self.scale[1]))
             color = wx.Colour(constants.NULL_COLOR)
             if pixel[2]:
                 color = wx.Colour(constants.PASS_COLOR)
@@ -113,6 +112,8 @@ class Viewer(wx.Panel):
     def update_pixels(self, key, new_color):
         """Update pixels in viewer."""
         self.color_map[key] = wx.Colour(new_color)
+        self.Refresh()
+        self.Update()
 
     def update_data(self):
         """Update data based on wafermap."""
@@ -154,6 +155,7 @@ class DataGrid(wx.grid.Grid):
         """Initialize the data display grid."""
         wx.grid.Grid.__init__(self, parent, 1)
         self.initialize()
+        self.EnableEditing(False)
 
     def initialize(self):
         """Create the base structure for the data grid."""

@@ -38,6 +38,10 @@ class AppTop(wx.Frame):
         self.right_panel.SetSizer(self.sizers["right"])
         self.grid_panel.SetSizerAndFit(self.sizers["grid"])
         self.legend_panel.SetSizer(self.sizers["legend"])
+        # Super janky, but only way I could get everything to work in windows
+        (sw, sh) = self.GetSize()
+        self.SetSize(wx.Size(sw - 1, sh - 1))
+        self.SetSize(wx.Size(sw, sh))
 
     def window(self):
         """Set the window size."""
@@ -156,6 +160,7 @@ class AppTop(wx.Frame):
             self.viewer.pixel_elements = pixels
         self.viewer.color_map = colors
         self.sizers["right"].Add(self.viewer, 1, wx.EXPAND | wx.ALL)
+        self.viewer.Bind(wx.EVT_KEY_DOWN, self.process_keypress)
 
     def create_controls(self):
         """Create the wafermap controls section."""
@@ -168,10 +173,11 @@ class AppTop(wx.Frame):
         btn_zoom_in = wx.Button(self.control_panel, 1, "Zoom +")
         btn_fit = wx.Button(self.control_panel, 1, "Fit")
 
+        self.sizers["control"].Add(btn_left, -1, wx.EXPAND | wx.ALL, border=1)
         self.sizers["control"].Add(btn_down, -1, wx.EXPAND | wx.ALL, border=1)
         self.sizers["control"].Add(btn_up, -1, wx.EXPAND | wx.ALL, border=1)
-        self.sizers["control"].Add(btn_left, -1, wx.EXPAND | wx.ALL, border=1)
         self.sizers["control"].Add(btn_right, -1, wx.EXPAND | wx.ALL, border=1)
+
         self.sizers["control"].Add(btn_zoom_out, -1, wx.EXPAND | wx.ALL, border=1)
         self.sizers["control"].Add(btn_zoom_in, -1, wx.EXPAND | wx.ALL, border=1)
         self.sizers["control"].Add(btn_fit, -1, wx.EXPAND | wx.ALL, border=1)
@@ -179,13 +185,57 @@ class AppTop(wx.Frame):
         self.control_panel.SetSizer(self.sizers["control"])
         self.sizers["left"].Add(self.control_panel, 1, wx.EXPAND | wx.ALL, border=1)
 
-        btn_down.Bind(wx.EVT_BUTTON, lambda event: self.set_offset(event, (0, 10)))
-        btn_up.Bind(wx.EVT_BUTTON, lambda event: self.set_offset(event, (0, -10)))
-        btn_left.Bind(wx.EVT_BUTTON, lambda event: self.set_offset(event, (-10, 0)))
-        btn_right.Bind(wx.EVT_BUTTON, lambda event: self.set_offset(event, (10, 0)))
-        btn_zoom_out.Bind(wx.EVT_BUTTON, lambda event: self.set_scale(event, 0.9))
-        btn_zoom_in.Bind(wx.EVT_BUTTON, lambda event: self.set_scale(event, 1.1))
+        btn_left.Bind(
+            wx.EVT_BUTTON, lambda event: self.set_offset(event, constants.STEP_LEFT)
+        )
+        btn_down.Bind(
+            wx.EVT_BUTTON, lambda event: self.set_offset(event, constants.STEP_DOWN)
+        )
+        btn_up.Bind(
+            wx.EVT_BUTTON, lambda event: self.set_offset(event, constants.STEP_UP)
+        )
+        btn_right.Bind(
+            wx.EVT_BUTTON, lambda event: self.set_offset(event, constants.STEP_RIGHT)
+        )
+
+        btn_zoom_out.Bind(
+            wx.EVT_BUTTON, lambda event: self.set_scale(event, constants.ZOOM_OUT)
+        )
+        btn_zoom_in.Bind(
+            wx.EVT_BUTTON, lambda event: self.set_scale(event, constants.ZOOM_IN)
+        )
         btn_fit.Bind(wx.EVT_BUTTON, lambda event: self.set_scale(event, 0))
+
+        # Key mapping for events
+        self.key_map = {
+            wx.WXK_NUMPAD4: ("step", constants.STEP_LEFT),
+            wx.WXK_LEFT: ("step", constants.STEP_LEFT),
+            wx.WXK_NUMPAD2: ("step", constants.STEP_DOWN),
+            wx.WXK_DOWN: ("step", constants.STEP_DOWN),
+            wx.WXK_NUMPAD8: ("step", constants.STEP_UP),
+            wx.WXK_UP: ("step", constants.STEP_UP),
+            wx.WXK_NUMPAD6: ("step", constants.STEP_RIGHT),
+            wx.WXK_RIGHT: ("step", constants.STEP_RIGHT),
+            ord("h"): ("step", constants.STEP_LEFT),
+            ord("H"): ("step", constants.STEP_LEFT),
+            ord("j"): ("step", constants.STEP_DOWN),
+            ord("J"): ("step", constants.STEP_DOWN),
+            ord("k"): ("step", constants.STEP_UP),
+            ord("K"): ("step", constants.STEP_UP),
+            ord("l"): ("step", constants.STEP_RIGHT),
+            ord("L"): ("step", constants.STEP_RIGHT),
+            wx.WXK_PAGEDOWN: ("zoom", constants.ZOOM_IN),
+            wx.WXK_PAGEUP: ("zoom", constants.ZOOM_OUT),
+            wx.WXK_NUMPAD_ADD: ("zoom", constants.ZOOM_IN),
+            wx.WXK_NUMPAD_SUBTRACT: ("zoom", constants.ZOOM_OUT),
+            wx.WXK_NUMPAD_EQUAL: ("zoom", 0),
+            wx.WXK_NUMPAD0: ("zoom", 0),
+            ord("]"): ("zoom", constants.ZOOM_IN),
+            ord("["): ("zoom", constants.ZOOM_OUT),
+            ord("f"): ("zoom", 0),
+            ord("F"): ("zoom", 0),
+            ord("0"): ("zoom", 0),
+        }
 
     def create_legend(self):
         """Create the legend section."""
@@ -219,18 +269,27 @@ class AppTop(wx.Frame):
 
     def set_scale(self, event, zoom_type):
         """Set wafermap scaling based on zoom button input."""
+        self.viewer.transform.Scale(zoom_type, zoom_type)
         if zoom_type == 0:
-            self.viewer.zoom_factor = 1
-            self.viewer.xorigin = 0
-            self.viewer.yorigin = 0
-            return
-        self.viewer.zoom_factor = zoom_type * self.viewer.zoom_factor
+            self.viewer.transform = wx.AffineMatrix2D()
+
+        self.viewer.Refresh()
+        self.viewer.Update()
 
     def set_offset(self, event, offset):
         """Set the frame offset."""
-        self.viewer.xorigin = self.viewer.xorigin + offset[0] * self.viewer.zoom_factor
-        self.viewer.yorigin = self.viewer.yorigin + offset[1] * self.viewer.zoom_factor
-        self.viewer.OnPaint(None)
+        self.viewer.transform.Translate(-1 * offset[0], -1 * offset[1])
+        self.viewer.Refresh()
+        self.viewer.Update()
+
+    def process_keypress(self, event):
+        """Process a keypress event."""
+        key_input = event.GetKeyCode()
+        key_data = self.key_map.get(key_input, (None, None))
+        if key_data[0] == "step":
+            self.set_offset(None, key_data[1])
+        elif key_data[0] == "zoom":
+            self.set_scale(None, key_data[1])
 
 
 class MenuBar(wx.MenuBar):
