@@ -288,7 +288,6 @@ class AppTop(wx.Frame):
     def process_keypress(self, event):
         """Process a keypress event."""
         key_input = event.GetKeyCode()
-        print(chr(key_input))
         key_data = self.key_map.get(key_input, (None, None))
         if key_data[0] == "step":
             self.set_offset(None, key_data[1])
