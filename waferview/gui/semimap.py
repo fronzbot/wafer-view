@@ -28,21 +28,18 @@ class Viewer(wx.Panel):
         self.xoffset = int((0.95 * width - scale_val) / 2)
         self.yoffset = int((0.95 * height - scale_val) / 2)
         self.scale = (scale_val, scale_val)
+        self.transform = wx.AffineMatrix2D()
 
     def OnPaint(self, event=None):
         """Handle painting events."""
         self.Refresh()
         self.Update()
         dc = wx.PaintDC(self)
+        dc.SetTransformMatrix(self.transform)
         dc.Clear()
         dc.SetPen(
             wx.Pen(wx.Colour(constants.NULL_COLOR), width=0, style=wx.PENSTYLE_SOLID)
         )
-        (width, height) = self.top.right_panel.GetSize()
-        xScale = self.zoom_factor * min(width, height) / self.scale[0]
-        yScale = self.zoom_factor * min(width, height) / self.scale[1]
-        dc.SetUserScale(xScale, yScale)
-        dc.SetLogicalOrigin(int(self.xorigin), int(self.yorigin))
         for key, rects in self.pixel_elements.items():
             try:
                 color = self.color_map[key]
