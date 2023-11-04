@@ -80,7 +80,6 @@ class AppTop(wx.Frame):
 
         self.viewer_size = (viewerX, viewerY)
         self.data_size = (dataX, dataY)
-      
 
     def create_panels(self):
         """Create panel structure and sizer elements."""
@@ -275,7 +274,7 @@ class AppTop(wx.Frame):
             self.viewer.zoom_factor = 1
             self.viewer.xorigin = 0
             self.viewer.yorigin = 0
-        
+
         self.viewer.Refresh()
         self.viewer.Update()
 
