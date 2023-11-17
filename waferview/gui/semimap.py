@@ -179,7 +179,9 @@ class LegendEntry(wx.Panel):
         wx.Panel.__init__(self, parent)
         self.viewer = viewer
         self.pixels = pixels
-        self.text = text
+        self.text = f"{text} ({len(pixels)})"
+        if text == "NULL":
+            self.text = text
         self.color = color
         self.initialize()
 

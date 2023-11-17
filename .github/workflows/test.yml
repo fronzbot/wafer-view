@@ -24,12 +24,12 @@ jobs:
             python-version: '3.11'
             download-wheel: true
           - os: ubuntu-20.04
-            python-version: '3.10'
+            python-version: '3.11'
             download-wheel: true
           - os: macos-latest
-            python-version: '3.11'
+            python-version: '3.12'
           - os: windows-latest
-            python-version: '3.11'
+            python-version: '3.12'
     steps:
     - uses: actions/checkout@v4
       with:
