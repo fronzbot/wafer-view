@@ -1,4 +1,5 @@
 """GUI module."""
+
 import importlib.metadata
 import os
 import wx
