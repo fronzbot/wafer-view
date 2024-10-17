@@ -1,2 +1,2 @@
-xmltodict==0.13.0
+xmltodict==0.14.2
 wxPython==4.2.1
